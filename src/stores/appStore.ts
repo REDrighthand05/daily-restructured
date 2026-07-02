@@ -1,5 +1,6 @@
-﻿import { create } from "zustand";
-import type { AppSettings, Note, Tab, Tag, EditorMode, ClipboardEntry, SearchResultItem } from "../types";
+import { create } from "zustand";
+import type { AppSettings, Note, Tag, ClipboardEntry } from "../types";
+import { useUIStore } from "./useUIStore";
 import * as ipc from "../bridge/ipc";
 
 interface AppState {
@@ -7,50 +8,28 @@ interface AppState {
   notes: Note[];
   tags: Tag[];
   clipboardEntries: ClipboardEntry[];
-  activeTab: Tab;
-  searchQuery: string;
-  selectedTagId: string | null;
-  editorMode: EditorMode;
-  showArchived: boolean;
-  showDeleted: boolean;
-  clipboardSearchQuery: string;
-  globalSearchOpen: boolean;
-  globalSearchQuery: string;
-  globalSearchResults: SearchResultItem[];
-  loaded: boolean;
 
   loadAll: () => Promise<void>;
   updateSettings: (s: Partial<AppSettings>) => Promise<void>;
   setNotes: (notes: Note[]) => void;
   saveNote: (note: Note) => Promise<void>;
   deleteNote: (id: string) => Promise<void>;
-  setActiveTab: (tab: Tab) => void;
-  setSearchQuery: (q: string) => void;
 
   loadTags: () => Promise<void>;
   saveTag: (tag: Tag) => Promise<void>;
   deleteTag: (id: string) => Promise<void>;
-  setSelectedTagId: (id: string | null) => void;
-  setEditorMode: (mode: EditorMode) => void;
 
   archiveNote: (id: string) => Promise<void>;
   restoreArchive: (id: string) => Promise<void>;
   softDeleteNote: (id: string) => Promise<void>;
   restoreNote: (id: string) => Promise<void>;
   purgeTrash: () => Promise<void>;
-  setShowArchived: (v: boolean) => void;
-  setShowDeleted: (v: boolean) => void;
 
   loadClipboardEntries: () => Promise<void>;
   addClipboardEntry: (entry: ClipboardEntry) => void;
   deleteClipboardEntry: (id: string) => Promise<void>;
   clearClipboardHistory: () => Promise<void>;
   starClipboardEntry: (id: string, starred: boolean) => Promise<void>;
-  setClipboardSearchQuery: (q: string) => void;
-  openGlobalSearch: () => void;
-  closeGlobalSearch: () => void;
-  setGlobalSearchQuery: (q: string) => void;
-  setGlobalSearchResults: (results: SearchResultItem[]) => void;
   moveNote: (id: string, direction: string) => Promise<void>;
   moveClipboardEntry: (id: string, direction: string) => Promise<void>;
 }
@@ -76,17 +55,6 @@ export const useAppStore = create<AppState>((set, get) => ({
   notes: [],
   tags: [],
   clipboardEntries: [],
-  activeTab: "notes",
-  searchQuery: "",
-  selectedTagId: null,
-  editorMode: "edit",
-  showArchived: false,
-  showDeleted: false,
-  clipboardSearchQuery: "",
-  globalSearchOpen: false,
-  globalSearchQuery: "",
-  globalSearchResults: [],
-  loaded: false,
 
   loadAll: async () => {
     const [settings, notes, tags, clipboardEntries] = await Promise.all([
@@ -100,8 +68,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       notes: notes || [],
       tags: tags || [],
       clipboardEntries: clipboardEntries || [],
-      loaded: true,
     });
+    useUIStore.getState().setLoaded(true);
   },
 
   updateSettings: async (partial) => {
@@ -136,12 +104,6 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ notes: get().notes.filter((n) => n.id !== id) });
   },
 
-  setActiveTab: (tab) => set({ activeTab: tab }),
-  setSearchQuery: (q) => set({ searchQuery: q }),
-  setSelectedTagId: (id) => set({ selectedTagId: id }),
-  setEditorMode: (mode) => set({ editorMode: mode }),
-  setShowArchived: (v) => set({ showArchived: v, showDeleted: false }),
-  setShowDeleted: (v) => set({ showDeleted: v, showArchived: false }),
 
   loadTags: async () => {
     try { set({ tags: await ipc.getTags() }); } catch {}
@@ -216,11 +178,6 @@ export const useAppStore = create<AppState>((set, get) => ({
     });
   },
 
-  setClipboardSearchQuery: (q) => set({ clipboardSearchQuery: q }),
-  openGlobalSearch: () => set({ globalSearchOpen: true, globalSearchQuery: "", globalSearchResults: [] }),
-  closeGlobalSearch: () => set({ globalSearchOpen: false, globalSearchQuery: "", globalSearchResults: [] }),
-  setGlobalSearchQuery: (q) => set({ globalSearchQuery: q }),
-  setGlobalSearchResults: (results) => set({ globalSearchResults: results }),
 
   moveNote: async (id, direction) => {
     await ipc.moveNote(id, direction);

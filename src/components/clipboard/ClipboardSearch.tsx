@@ -1,8 +1,8 @@
-import { useAppStore } from "../../stores/appStore";
+import { useUIStore } from "../../stores/useUIStore";
 import { Search, X } from "lucide-react";
 
 export default function ClipboardSearch() {
-  const { clipboardSearchQuery, setClipboardSearchQuery } = useAppStore();
+  const { clipboardSearchQuery, setClipboardSearchQuery } = useUIStore();
 
   return (
     <div className="cb-search">

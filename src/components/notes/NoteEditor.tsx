@@ -1,6 +1,7 @@
-﻿import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useAppStore } from "../../stores/appStore";
+import { useUIStore } from "../../stores/useUIStore";
 import type { Note } from "../../types";
 import TagChip from "../tags/TagChip";
 import TagPicker from "../tags/TagPicker";
@@ -10,7 +11,8 @@ import MarkdownPreview from "./MarkdownPreview";
 
 export default function NoteEditor() {
   const { t } = useTranslation();
-  const { notes, tags, editorMode, setEditorMode, saveNote } = useAppStore();
+  const { notes, tags, saveNote } = useAppStore();
+  const { editorMode, setEditorMode } = useUIStore();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showTagPicker, setShowTagPicker] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);

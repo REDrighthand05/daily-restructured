@@ -1,10 +1,12 @@
 import { useTranslation } from "react-i18next";
 import { useAppStore } from "../../stores/appStore";
+import { useUIStore } from "../../stores/useUIStore";
 import { X } from "lucide-react";
 
 export default function CategoryFilter() {
   const { t } = useTranslation();
-  const { tags, notes, selectedTagId, setSelectedTagId } = useAppStore();
+  const { tags, notes } = useAppStore();
+  const { selectedTagId, setSelectedTagId } = useUIStore();
 
   const tagCounts = new Map<string, number>();
   notes.forEach((n) => n.tags.forEach((tId) => {

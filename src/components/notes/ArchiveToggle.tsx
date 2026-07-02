@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next";
-import { useAppStore } from "../../stores/appStore";
+import { useUIStore } from "../../stores/useUIStore";
 import { Archive, Trash2, FileText } from "lucide-react";
 
 export default function ArchiveToggle() {
   const { t } = useTranslation();
-  const { showArchived, showDeleted, setShowArchived, setShowDeleted } = useAppStore();
+  const { showArchived, showDeleted, setShowArchived, setShowDeleted } = useUIStore();
 
   const mode = showDeleted ? "trash" : showArchived ? "archive" : "active";
 

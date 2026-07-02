@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useAppStore } from "../../stores/appStore";
+import { useUIStore } from "../../stores/useUIStore";
 import { globalSearch } from "../../bridge/ipc";
 import type { SearchResultItem } from "../../types";
 import { Search, FileText, Clipboard, X } from "lucide-react";
@@ -10,7 +10,7 @@ export default function SearchOverlay() {
   const {
     globalSearchOpen, globalSearchQuery, globalSearchResults,
     closeGlobalSearch, setGlobalSearchQuery, setGlobalSearchResults, setActiveTab,
-  } = useAppStore();
+  } = useUIStore();
   const inputRef = useRef<HTMLInputElement>(null);
   const [selectedIdx, setSelectedIdx] = useState(0);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);

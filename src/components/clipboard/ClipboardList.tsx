@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useAppStore } from "../../stores/appStore";
+import { useUIStore } from "../../stores/useUIStore";
 import type { ClipboardEntry as CEntry } from "../../types";
 import ClipboardEntryComponent from "./ClipboardEntry";
 import ClipboardSearch from "./ClipboardSearch";
@@ -11,10 +12,11 @@ import { clipboardPoll } from "../../bridge/ipc";
 export default function ClipboardList() {
   const { t } = useTranslation();
   const {
-    clipboardEntries, clipboardSearchQuery,
+    clipboardEntries,
     loadClipboardEntries, addClipboardEntry,
     deleteClipboardEntry, clearClipboardHistory, starClipboardEntry,
   } = useAppStore();
+  const { clipboardSearchQuery } = useUIStore();
   const [detailEntry, setDetailEntry] = useState<CEntry | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 

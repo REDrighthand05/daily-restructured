@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next";
-import { useAppStore } from "../../stores/appStore";
+import { useUIStore } from "../../stores/useUIStore";
 import { Search, X } from "lucide-react";
 
 export default function NoteSearch() {
   const { t } = useTranslation();
-  const { searchQuery, setSearchQuery } = useAppStore();
+  const { searchQuery, setSearchQuery } = useUIStore();
 
   return (
     <div className="search-bar">

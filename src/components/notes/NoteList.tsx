@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useAppStore } from "../../stores/appStore";
+import { useUIStore } from "../../stores/useUIStore";
 import type { Note } from "../../types";
 import { Plus, Pin, Trash2, Archive, ChevronUp, ChevronDown } from "lucide-react";
 import CategoryFilter from "../tags/CategoryFilter";
@@ -14,10 +15,10 @@ export default function NoteList() {
   const { t } = useTranslation();
   const {
     moveNote,
-    notes, searchQuery, selectedTagId,
-    showArchived, showDeleted,
+    notes,
     saveNote, archiveNote, restoreArchive, softDeleteNote
   } = useAppStore();
+  const { searchQuery, selectedTagId, showArchived, showDeleted } = useUIStore();
 
   // If trash view is active, show TrashBin instead
   if (showDeleted) {

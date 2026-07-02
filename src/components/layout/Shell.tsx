@@ -7,13 +7,15 @@ import ClipboardList from "../clipboard/ClipboardList";
 import { useTranslation } from "react-i18next";
 import SearchOverlay from "../search/SearchOverlay";
 import { useAppStore } from "../../stores/appStore";
+import { useUIStore } from "../../stores/useUIStore";
 import { useEffect } from "react";
 import { listen } from "@tauri-apps/api/event";
 import { FileText, Clipboard, Settings } from "lucide-react";
 
 export default function Shell() {
   const { t } = useTranslation();
-  const { activeTab, loadAll, setActiveTab } = useAppStore();
+  const { loadAll } = useAppStore();
+  const { activeTab, setActiveTab } = useUIStore();
 
   useEffect(() => {
     loadAll();
@@ -29,11 +31,11 @@ export default function Shell() {
     const handler = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement).tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
-      const state = useAppStore.getState();
-      if (state.globalSearchOpen) return;
+      const uiState = useUIStore.getState();
+      if (uiState.globalSearchOpen) return;
       if (e.key === "/" || ((e.ctrlKey || e.metaKey) && e.key === "f")) {
         e.preventDefault();
-        state.openGlobalSearch();
+        uiState.openGlobalSearch();
       }
     };
     window.addEventListener("keydown", handler);

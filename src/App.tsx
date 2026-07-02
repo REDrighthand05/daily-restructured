@@ -1,12 +1,14 @@
-﻿import Shell from "./components/layout/Shell";
+import Shell from "./components/layout/Shell";
 import { useAppStore } from "./stores/appStore";
+import { useUIStore } from "./stores/useUIStore";
 import { useEffect } from "react";
 import * as ipc from "./bridge/ipc";
 import "./styles/global.css";
 import "./styles/components.css";
 
 export default function App() {
-  const { settings, loaded, loadAll } = useAppStore();
+  const { settings, loadAll } = useAppStore();
+  const { loaded } = useUIStore();
 
   useEffect(() => {
     if (!loaded) {
