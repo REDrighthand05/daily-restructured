@@ -16,6 +16,7 @@ export default function App() {
       return;
     }
     if (loaded) {
+      document.documentElement.style.setProperty('--window-alpha', String(settings.opacity));
       ipc.setWindowOpacity(settings.opacity, settings.theme ?? "system").catch(() => {});
     }
   }, [settings.opacity, loaded]);
