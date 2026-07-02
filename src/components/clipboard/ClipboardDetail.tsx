@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { ClipboardEntry as CEntry } from "../../types";
 import { Star, Trash2, Clipboard, ArrowLeft } from "lucide-react";
 import { writeClipboard } from "../../bridge/ipc";
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export default function ClipboardDetail({ entry, onBack, onDelete, onStar }: Props) {
+  const { t } = useTranslation();
   const handleCopy = async () => {
     try { await writeClipboard(entry.content); } catch (e) { console.error("Clipboard copy failed:", e); }
   };
@@ -22,17 +24,17 @@ export default function ClipboardDetail({ entry, onBack, onDelete, onStar }: Pro
           <ArrowLeft size={14} /> Back
         </button>
         <div className="cb-detail-actions">
-          <button className="cb-action-btn" onClick={handleCopy} title="Copy to clipboard">
+          <button className="cb-action-btn" onClick={handleCopy} title={t("clipboard.copy")}>
             <Clipboard size={14} />
           </button>
           <button
             className={`cb-action-btn ${entry.starred ? "starred" : ""}`}
             onClick={() => onStar(entry.id, !entry.starred)}
-            title={entry.starred ? "Unstar" : "Star"}
+            title={entry.starred ? t("clipboard.unstar") : t("clipboard.star")}
           >
             <Star size={14} />
           </button>
-          <button className="cb-action-btn" onClick={() => onDelete(entry.id)} title="Delete">
+          <button className="cb-action-btn" onClick={() => onDelete(entry.id)} title={t("common.delete")}>
             <Trash2 size={14} />
           </button>
         </div>
@@ -41,7 +43,7 @@ export default function ClipboardDetail({ entry, onBack, onDelete, onStar }: Pro
         <pre className="cb-detail-text">{entry.content}</pre>
       </div>
       <div className="cb-detail-meta">
-        Type: {entry.content_type} | {new Date(entry.created_at).toLocaleString()}
+        {t("clipboard.contentType")}: {entry.content_type} | {new Date(entry.created_at).toLocaleString()}
       </div>
     </div>
   );

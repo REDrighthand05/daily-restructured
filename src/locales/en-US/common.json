@@ -39,7 +39,9 @@
     "archive": "Archive",
     "unarchive": "Unarchive",
     "pin": "Pin",
-    "unpin": "Unpin"
+    "unpin": "Unpin",
+    "deletedCount": "{count} deleted",
+    "purgeConfirm": "Permanently delete all trashed notes?"
   },
   "clipboard": {
     "title": "Clipboard",
@@ -52,7 +54,8 @@
     "copied": "Copied!",
     "star": "Star",
     "unstar": "Unstar",
-    "detail": "Clipboard Detail"
+    "detail": "Clipboard Detail",
+    "contentType": "Type"
   },
   "search": {
     "placeholder": "Search notes and clipboard...",

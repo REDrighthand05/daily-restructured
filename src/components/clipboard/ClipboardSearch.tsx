@@ -1,7 +1,9 @@
+import { useTranslation } from "react-i18next";
 import { useUIStore } from "../../stores/useUIStore";
 import { Search, X } from "lucide-react";
 
 export default function ClipboardSearch() {
+  const { t } = useTranslation();
   const { clipboardSearchQuery, setClipboardSearchQuery } = useUIStore();
 
   return (
@@ -10,7 +12,7 @@ export default function ClipboardSearch() {
       <input
         value={clipboardSearchQuery}
         onChange={(e) => setClipboardSearchQuery(e.target.value)}
-        placeholder="Search clipboard..."
+        placeholder={t("clipboard.search")}
         className="cb-search-input"
       />
       {clipboardSearchQuery && (
