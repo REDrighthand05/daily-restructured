@@ -1,4 +1,4 @@
-﻿[package]
+[package]
 name = "daily-restructured"
 version = "1.1.0"
 description = "A lightweight desktop side-panel utility"
