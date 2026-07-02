@@ -1,0 +1,11 @@
+﻿{
+    "platforms":  {
+                      "windows-x86_64":  {
+                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSQkk2YzQxRFhLSHY4L2EzemFOc2JMa2xVWEhQRHQ5d0w4MTRQUC9HVFNvdWE1V3F3citwRWo0VDQybllkNlNaRmJZOU1Rak5tdDBQNkdKZStGWW5DNWQ5QW1lWEdkN3d3PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgzMDIwMzg1CWZpbGU6RGFpbHlfMS4xLjBfeDY0X2VuLVVTLm1zaQpKSmZYSmwrTWxkU3MxdEpUcjhSVkJML3Blb3ZxWHA4ek1ITXQrUHU5Smd5OWJWNStYaWtnUmdBSEdXdU9SdWJFTllRUEg2QkxlSjJGYTk0dFV1dlpBdz09Cg==",
+                                             "url":  "https://github.com/REDrighthand05/daily-restructured/releases/download/v1.5.0/Daily_1.5.0_x64_en-US.msi"
+                                         }
+                  },
+    "pub_date":  "2026-07-03T03:26:33.441Z",
+    "version":  "1.5.0",
+    "notes":  "- Auto-updater configured with Tauri signing key\n- latest.json for automatic update checks\n- Version numbers synced to 1.5.0\n- Signatures generated for MSI+EXE installers"
+}
