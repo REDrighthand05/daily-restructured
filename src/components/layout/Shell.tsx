@@ -2,10 +2,11 @@ import TitleBar from "./TitleBar";
 import NoteList from "../notes/NoteList";
 import NoteEditor from "../notes/NoteEditor";
 import NoteSearch from "../notes/NoteSearch";
-import SettingsPage from "../settings/SettingsPage";
+const SettingsPage = React.lazy(() => import("../settings/SettingsPage"));
 import ClipboardList from "../clipboard/ClipboardList";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import SearchOverlay from "../search/SearchOverlay";
+const SearchOverlay = React.lazy(() => import("../search/SearchOverlay"));
 import { useAppStore } from "../../stores/appStore";
 import { useUIStore } from "../../stores/useUIStore";
 import { useEffect } from "react";
@@ -44,7 +45,7 @@ export default function Shell() {
 
   return (
     <div className="app-container">
-      <SearchOverlay />
+      <React.Suspense fallback={null}><SearchOverlay /></React.Suspense>
       <TitleBar />
       {activeTab === "notes" && (
         <div className="notes-panel">
@@ -56,7 +57,7 @@ export default function Shell() {
         </div>
       )}
       {activeTab === "clipboard" && <ClipboardList />}
-      {activeTab === "settings" && <SettingsPage />}
+      {activeTab === "settings" && <React.Suspense fallback={<div className="loading-panel">Loading...</div>}><SettingsPage /></React.Suspense>}
       <div className="tab-bar">
         <button
           className={`tab-bar-btn ${activeTab === "notes" ? "active" : ""}`}

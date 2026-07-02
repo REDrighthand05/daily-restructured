@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { useRef, useMemo } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { useAppStore } from "../../stores/appStore";
 import { useUIStore } from "../../stores/useUIStore";
 import type { Note } from "../../types";
@@ -19,6 +21,7 @@ export default function NoteList() {
     saveNote, archiveNote, restoreArchive, softDeleteNote
   } = useAppStore();
   const { searchQuery, selectedTagId, showArchived, showDeleted } = useUIStore();
+  const parentRef = useRef<HTMLDivElement>(null);
 
   // If trash view is active, show TrashBin instead
   if (showDeleted) {
@@ -32,27 +35,27 @@ export default function NoteList() {
     );
   }
 
-  let filtered = notes.filter((n) => {
-    // Always exclude deleted notes
-    if (n.deleted_at !== null) return false;
-    // If not showing archived, exclude archived too
-    if (!showArchived && n.archived) return false;
-    return true;
-  });
-
-  if (selectedTagId) {
-    filtered = filtered.filter((n) => n.tags.includes(selectedTagId));
-  }
-
-  if (searchQuery) {
-    filtered = filtered.filter((n) =>
+  const sorted = useMemo(() => {
+    let f = notes.filter((n) => {
+      if (n.deleted_at !== null) return false;
+      if (!showArchived && n.archived) return false;
+      return true;
+    });
+    if (selectedTagId) f = f.filter((n) => n.tags.includes(selectedTagId));
+    if (searchQuery) f = f.filter((n) =>
       n.content.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }
+    return [...f].sort((a, b) => {
+      if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
+      return b.updated_at - a.updated_at;
+    });
+  }, [notes, showArchived, selectedTagId, searchQuery]);
 
-  const sorted = [...filtered].sort((a, b) => {
-    if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
-    return b.updated_at - a.updated_at;
+  const virtualizer = useVirtualizer({
+    count: sorted.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 48,
+    overscan: 5,
   });
 
   const handleNew = async () => {
@@ -75,24 +78,34 @@ export default function NoteList() {
     <div className="note-list">
       <ArchiveToggle />
       <div className="note-list-header">
-        <span className="note-count">{showArchived ? t("notes.archivedCount", { count: filtered.length }) : t("notes.count", { count: filtered.length })}</span>
+        <span className="note-count">{showArchived ? t("notes.archivedCount", { count: sorted.length }) : t("notes.count", { count: sorted.length })}</span>
         <button className="note-new-btn" onClick={handleNew} title={t("notes.newNote")}>
           <Plus size={16} />
         </button>
       </div>
       <CategoryFilter />
-      <div className="note-list-items">
-        {sorted.map((note) => (
-          <NoteListItem
-            key={note.id}
-            note={note}
-            showArchived={showArchived}
-            onSave={saveNote}
-            onDelete={softDeleteNote}
-            onMove={moveNote}
-            onArchive={showArchived ? restoreArchive : archiveNote}
-                      />
-        ))}
+      <div className="note-list-items" ref={parentRef}>
+        <div style={{ height: `${virtualizer.getTotalSize()}px`, width: '100%', position: 'relative' }}>
+          {virtualizer.getVirtualItems().map((vItem) => {
+            const note = sorted[vItem.index];
+            return (
+              <div key={note.id} style={{
+                position: 'absolute', top: 0, left: 0, width: '100%',
+                height: `${vItem.size}px`,
+                transform: `translateY(${vItem.start}px)`
+              }}>
+                <NoteListItem
+                  note={note}
+                  showArchived={showArchived}
+                  onSave={saveNote}
+                  onDelete={softDeleteNote}
+                  onMove={moveNote}
+                  onArchive={showArchived ? restoreArchive : archiveNote}
+                />
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

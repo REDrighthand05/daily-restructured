@@ -1,4 +1,6 @@
 import { useEffect, useState, useRef } from "react";
+import { useMemo } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { useTranslation } from "react-i18next";
 import { useAppStore } from "../../stores/appStore";
 import { useUIStore } from "../../stores/useUIStore";
@@ -42,11 +44,19 @@ export default function ClipboardList() {
     );
   }
 
-  const filtered = clipboardSearchQuery
+  const parentRef = useRef<HTMLDivElement>(null);
+  const filtered = useMemo(() => clipboardSearchQuery
     ? clipboardEntries.filter((e) =>
         e.content.toLowerCase().includes(clipboardSearchQuery.toLowerCase())
       )
-    : clipboardEntries;
+    : clipboardEntries, [clipboardEntries, clipboardSearchQuery]);
+
+  const virtualizer = useVirtualizer({
+    count: filtered.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 48,
+    overscan: 5,
+  });
 
   return (
     <div className="clipboard-panel">
@@ -61,16 +71,26 @@ export default function ClipboardList() {
         </button>
       </div>
       <ClipboardSearch />
-      <div className="clipboard-list">
-        {filtered.map((entry) => (
-          <ClipboardEntryComponent
-            key={entry.id}
-            entry={entry}
-            onDelete={deleteClipboardEntry}
-            onStar={starClipboardEntry}
-            onClick={setDetailEntry}
-          />
-        ))}
+      <div className="clipboard-list" ref={parentRef}>
+        <div style={{ height: `${virtualizer.getTotalSize()}px`, width: '100%', position: 'relative' }}>
+          {virtualizer.getVirtualItems().map((vItem) => {
+            const entry = filtered[vItem.index];
+            return (
+              <div key={entry.id} style={{
+                position: 'absolute', top: 0, left: 0, width: '100%',
+                height: `${vItem.size}px`,
+                transform: `translateY(${vItem.start}px)`
+              }}>
+                <ClipboardEntryComponent
+                  entry={entry}
+                  onDelete={deleteClipboardEntry}
+                  onStar={starClipboardEntry}
+                  onClick={setDetailEntry}
+                />
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
